@@ -1,0 +1,33 @@
+#! /bin/bash
+
+# Check to make sure KD is installed
+if [ $(which kd) == "" ]; then
+ echo "Please Install the Koding Daemon. Please see https://www.koding.com/docs/connect-your-machine"
+ exit;
+fi
+
+# Make sure the Script is run as Sudo
+if [[ $UID != 0 ]]; then
+    echo "Please run this script with sudo:"
+    echo "sudo $0 $*"
+    exit 1
+fi
+
+# Adds virtual machines as hosts
+add_hosts() {
+ echo "$1 $2" >> /etc/hosts
+}
+
+# remove virtual machines as hosts
+remove_hosts() {
+   sed -i /${1}/d /etc/hosts
+}
+
+#remove_hosts
+#add_hosts
+kd ls | awk 'NR>1{print $4"\t"$3}' | while read l
+do
+   remove_hosts $(echo $l | awk '{print $2}')
+   add_hosts $l
+    
+done
