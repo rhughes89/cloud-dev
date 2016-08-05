@@ -23,9 +23,7 @@ remove_hosts() {
    sed -i /${1}/d /etc/hosts
 }
 
-#remove_hosts
-#add_hosts
-kd ls | awk 'NR>1{print $4"\t"$3}' | while read l
+kd ls | grep online | awk '{print $4"\t"$3}' | while read l
 do
    remove_hosts $(echo $l | awk '{print $2}')
    add_hosts $l
